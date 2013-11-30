@@ -49,6 +49,19 @@ public class BaseBlock extends Block {
         super(type, data);
     }
 
+    public static BaseBlock wildcard(int type, int data, final int mask) {
+        return new BaseBlock(type, data) {
+            @Override
+            public int getMask() {
+                return mask;
+            }
+        };
+    }
+
+    public int getMask() {
+        return ~0;
+    }
+
     /**
      * Get the type of block.
      * 
@@ -149,13 +162,18 @@ public class BaseBlock extends Block {
     }
 
     /**
-     * Checks if the type is the same, and if data is the same if only data != -1.
-     * 
+     * Checks whether the type ID and data value are equal, after applying masks to the data values.
+     *
      * @param o other block
      * @return true if equal
      */
     public boolean equalsFuzzy(BaseBlock o) {
-        return (getType() == o.getType()) && (getData() == o.getData() || getData() == -1 || o.getData() == -1);
+        if (getType() != o.getType()) {
+            return false;
+        }
+
+        final int mask = getMask() & o.getMask();
+        return (getData() & mask) == (o.getData() & mask);
     }
 
     /**

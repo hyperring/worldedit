@@ -19,7 +19,6 @@
 package com.sk89q.worldedit;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -537,21 +536,9 @@ public class EditSession {
     public int countBlock(Region region, Set<Integer> searchIDs) {
         Set<BaseBlock> passOn = new HashSet<BaseBlock>();
         for (Integer i : searchIDs) {
-            passOn.add(new BaseBlock(i, -1));
+            passOn.add(BaseBlock.wildcard(i, 0, 0));
         }
         return countBlocks(region, passOn);
-    }
-
-    private static boolean containsFuzzy(Collection<BaseBlock> collection, Object o) {
-        // allow -1 data in the searchBlocks to match any type
-        for (BaseBlock b : collection) {
-            if (o instanceof BaseBlock) {
-                if (b.equalsFuzzy((BaseBlock) o)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -582,7 +569,7 @@ public class EditSession {
                         Vector pt = new Vector(x, y, z);
 
                         BaseBlock compare = new BaseBlock(getBlockType(pt), getBlockData(pt));
-                        if (containsFuzzy(searchBlocks, compare)) {
+                        if (BaseBlock.containsFuzzy(searchBlocks, compare)) {
                             ++count;
                         }
                     }
@@ -591,7 +578,7 @@ public class EditSession {
         } else {
             for (Vector pt : region) {
                 BaseBlock compare = new BaseBlock(getBlockType(pt), getBlockData(pt));
-                if (containsFuzzy(searchBlocks, compare)) {
+                if (BaseBlock.containsFuzzy(searchBlocks, compare)) {
                     ++count;
                 }
             }
@@ -1244,7 +1231,7 @@ public class EditSession {
 
         if (fromBlockTypes != null) {
             for (BaseBlock block : fromBlockTypes) {
-                if (block.getData() == -1) {
+                if (block.getMask() != ~0) {
                     fuzzyBlockTypes.add(block.getType());
                 } else {
                     definiteBlockTypes.add(block);
@@ -1329,7 +1316,7 @@ public class EditSession {
         Set<Integer> fuzzyBlockTypes = new HashSet<Integer>();
         if (fromBlockTypes != null) {
             for (BaseBlock block : fromBlockTypes) {
-                if (block.getData() == -1) {
+                if (block.getMask() != ~0) {
                     fuzzyBlockTypes.add(block.getType());
                 } else {
                     definiteBlockTypes.add(block);

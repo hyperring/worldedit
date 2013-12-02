@@ -52,6 +52,10 @@ public class BaseBlock extends Block {
     }
 
     public static BaseBlock wildcard(int type, int data, final int mask) {
+        if (mask == ~0) {
+            return new BaseBlock(type, data);
+        }
+
         return new BaseBlock(type, data) {
             @Override
             public int getMask() {

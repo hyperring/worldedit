@@ -181,7 +181,7 @@ public class BaseBlock extends Block {
     /**
      * @param iter
      * @return
-     * @deprecated This method is silly, use {@link #containsFuzzy(java.util.Collection, Object)} instead.
+     * @deprecated This method is silly, use {@link #containsFuzzy(java.util.Collection, BaseBlock)} instead.
      */
     @Deprecated
     public boolean inIterable(Iterable<BaseBlock> iter) {
